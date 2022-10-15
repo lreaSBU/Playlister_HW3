@@ -169,6 +169,18 @@ export const useGlobalStore = () => {
         asyncLoadIdNamePairs();
     }
 
+    store.createNewList = function(){
+        async function asynccreateNewList(){
+            const r = await api.createNewList();
+            console.log("WE GOT SOMETHING!!!");
+            console.log(r);
+            if(r.data.success){
+                //DO SOMETHING!!!
+            }
+        }
+        asynccreateNewList();
+    }
+
     store.setCurrentList = function (id) {
         async function asyncSetCurrentList(id) {
             let response = await api.getPlaylistById(id);
