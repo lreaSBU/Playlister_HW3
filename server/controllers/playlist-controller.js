@@ -8,13 +8,19 @@ const Playlist = require('../models/playlist-model')
 */
 updatePlaylistById = (req, res) => {
     const body = req.body;
-    Playlist.findOne({ _id: body._id }, (err, list) => {
+    Playlist.updateOne({ _id: body._id }, { name: body.data.name }, function(err, res1) {
+        return res.status(202).json({ success: true, message: 'Playlist Edited!' });
+    }).catch(err => console.log(err));
+    /*Playlist.findOne({ _id: body._id }, (err, list) => {
         if (err) {
             return res.status(400).json({ success: false, error: err })
         }
-        list = body.pl; //set the playlist to the given param
+        console.log("BODY: " + body);
+        list.name = body.data.name;
+        list.songs = body.data.songs;
+        //list = body.pl; //set the playlist to the given param
         return res.status(202).json({ success: true, playlist: list, message: 'Playlist Edited!'})
-    }).catch(err => console.log(err))
+    }).catch(err => console.log(err))*/
 }
 createPlaylist = (req, res) => {
     const body = req.body;

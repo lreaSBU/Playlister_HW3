@@ -14,7 +14,6 @@ function ListCard(props) {
     const [ text, setText ] = useState("");
     store.history = useHistory();
     const { idNamePair, selected } = props;
-
     function handleLoadList(event) {
         if (!event.target.disabled) {
             let _id = event.target.id;
