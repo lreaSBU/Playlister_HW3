@@ -116,7 +116,7 @@ export const useGlobalStore = () => {
         async function asyncChangeListName(id) {
             let response = await api.getPlaylistById(id);
             if (response.data.success) {
-                let playlist = response.data.playist;
+                let playlist = response.data.playlist;
                 playlist.name = newName;
                 async function updateList(playlist) {
                     response = await api.updatePlaylistById(playlist._id, playlist);
@@ -169,13 +169,17 @@ export const useGlobalStore = () => {
         asyncLoadIdNamePairs();
     }
 
-    store.createNewList = function(){
+    store.createNewList = function(name){
         async function asynccreateNewList(){
-            const r = await api.createNewList();
+            const r = await api.createNewList(name);
             console.log("WE GOT SOMETHING!!!");
             console.log(r);
             if(r.data.success){
-                //DO SOMETHING!!!
+                var pl = r.data.playlist;
+                storeReducer({
+                    type: GlobalStoreActionType.CREATE_NEW_LIST,
+                    payload: pl
+                });
             }
         }
         asynccreateNewList();
@@ -209,11 +213,18 @@ export const useGlobalStore = () => {
     }
 
     // THIS FUNCTION ENABLES THE PROCESS OF EDITING A LIST NAME
-    store.setlistNameActive = function () {
-        storeReducer({
-            type: GlobalStoreActionType.SET_LIST_NAME_EDIT_ACTIVE,
-            payload: null
-        });
+    store.setlistNameActive = function (id) {
+        async function aSetlistnameActive(){
+            let r = await api.getPlaylistById(id);
+            if(r.data.success){
+                var pl = r.data.playlist;
+                storeReducer({
+                    type: GlobalStoreActionType.SET_LIST_NAME_EDIT_ACTIVE,
+                    payload: pl
+                });
+            }
+        }
+        aSetlistnameActive();
     }
 
     // THIS GIVES OUR STORE AND ITS REDUCER TO ANY COMPONENT THAT NEEDS IT
