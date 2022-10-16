@@ -2,6 +2,7 @@ import { createContext, useState } from 'react'
 import jsTPS from '../common/jsTPS'
 import AddSongTransaction from '../common/AddSongTransaction'
 import RemoveSongTransaction from '../common/RemoveSongTransaction'
+import EditSongTransaction from '../common/EditSongTransaction'
 import api from '../api'
 export const GlobalStoreContext = createContext({});
 /*
@@ -285,12 +286,28 @@ export const useGlobalStore = () => {
         tps.doTransaction();
     }
 
-
+    store.addEditSongTransaction = function(song, newTitle, newArtist, newLink){
+        tps.addTransaction(new EditSongTransaction(store, song, newTitle, newArtist, newLink));
+    }
     store.addAddSongTransaction = function(song){
         tps.addTransaction(new AddSongTransaction(store, song));
     }
     store.addRemoveSongTransaction = function(song){
         tps.addTransaction(new RemoveSongTransaction(store, song));
+    }
+    store.editSong = async function(song, t, a, l){
+        var r = await api.editSong(store.currentList._id, song, t, a, l);
+        console.log("attempting song edit: " + t + ", " + a + ", " + l);
+        console.log(r);
+        if(r.data.success){
+            console.log("Succesfully edited song!");
+            storeReducer({
+                type: GlobalStoreActionType.CHANGE_SONGS,
+                payload: r.data.playlist
+            });
+            console.log("EDITED NOW?");
+            console.log(store);
+        }
     }
     store.removeSong = async function(song){
         var r = await api.removeSong(store.currentList._id, song);
@@ -298,8 +315,13 @@ export const useGlobalStore = () => {
         console.log(r);
         if(r.data.success){
             console.log("Succesfully deleted song!");
+            storeReducer({
+                type: GlobalStoreActionType.CHANGE_SONGS,
+                payload: r.data.playlist
+            });
+            console.log("REMOVED NOW?");
+            console.log(store);
         }
-        store.loadIdNamePairs();
     }
     store.addSong = async function(song){
         var r = await api.addSong(store.currentList._id, song);
@@ -311,16 +333,8 @@ export const useGlobalStore = () => {
                 type: GlobalStoreActionType.CHANGE_SONGS,
                 payload: r.data.playlist
             });
-            console.log("NOW?");
+            console.log("ADDED NOW?");
             console.log(store);
-            //store.currentList.songs = r.data.playlist.songs;
-            /*var up = await api.updatePlaylistById(store.currentList._id, r.data.playlist);
-            console.log(up);
-            if(up.status == 200){
-                console.log("succesfully actually updated the playlist with new song!");
-                store.loadIdNamePairs();
-                console.log(store);
-            }*/
         }
     }
     // THIS FUNCTION ENABLES THE PROCESS OF EDITING A LIST NAME

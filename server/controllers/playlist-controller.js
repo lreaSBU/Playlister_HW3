@@ -24,6 +24,31 @@ addSong = async (req, res) => { //pid, song
         //return res.status(200).json({ success: true, playlist: list }) //song added!
     }).catch(err => console.log(err))
 }
+editSong = async (req, res) => {
+    var body = req.body;
+    var pid = body.list;
+    var song = body.song;
+    var t = body.title;
+    var a = body.artist;
+    var l = body.link;
+    await Playlist.findOne({ _id: pid }, (err, list) => {
+        if (err) {
+            return res.status(400).json({ success: false, error: err })
+        }
+        for(var i = 0; i < list.songs.length; i++){
+            if(list.songs[i]._id == song._id){
+                list.songs[i].title = t;
+                list.songs[i].artist = a;
+                list.songs[i].youTubeId = l;
+                break;
+            }
+        }
+        Playlist.updateOne({ _id: pid }, { name: list.name, songs: list.songs }, function(err, res1) {
+            return res.status(200).json({ success: true, playlist: list, message: 'Song Edited!' });
+        }).catch(err => console.log(err));
+        //return res.status(200).json({ success: true, playlist: list }) //song edited!
+    }).catch(err => console.log(err))
+}
 removeSong = async (req, res) => {
     var body = req.body;
     var pid = body.list;
@@ -33,12 +58,15 @@ removeSong = async (req, res) => {
             return res.status(400).json({ success: false, error: err })
         }
         for(var i = 0; i < list.songs.length; i++){
-            if(list.songs[i].name == song.name){
+            if(list.songs[i]._id == song._id){
                 list.songs.splice(i, 1);
                 break;
             }
         }
-        return res.status(200).json({ success: true, playlist: list }) //song removed!
+        Playlist.updateOne({ _id: pid }, { name: list.name, songs: list.songs }, function(err, res1) {
+            return res.status(200).json({ success: true, playlist: list, message: 'Song Removed!' });
+        }).catch(err => console.log(err));
+        //return res.status(200).json({ success: true, playlist: list }) //song removed!
     }).catch(err => console.log(err))
 }
 updatePlaylistById = (req, res) => {
@@ -159,5 +187,6 @@ module.exports = {
     updatePlaylistById,
     deletePlaylistById,
     addSong,
-    removeSong
+    removeSong,
+    editSong
 }
