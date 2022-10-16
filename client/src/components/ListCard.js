@@ -25,14 +25,19 @@ function ListCard(props) {
         }
     }
 
-    function handleToggleEdit(event) {
+    function handleDeleteList(event) {
         event.stopPropagation();
-        toggleEdit();
+        store.markListForDeletion(idNamePair._id);
     }
 
-    function toggleEdit() {
+    function handleToggleEdit(event) {
+        event.stopPropagation();
+        toggleEdit(true);
+    }
+
+    function toggleEdit(b) {
         let newActive = !editActive;
-        if (newActive) {
+        if (b && newActive) {
             store.setlistNameActive(idNamePair._id);
         }
         setEditActive(newActive);
@@ -43,11 +48,16 @@ function ListCard(props) {
             let id = event.target.id.substring("list-".length);
             //console.log("chagning to: " + text + " with id: " + id);
             store.changeListName(id, text);
-            toggleEdit();
+            toggleEdit(true);
         }
     }
     function handleUpdateText(event) {
         setText(event.target.value );
+    }
+
+    if(!editActive && store.listNameActive && store.currentList && store.currentList._id == idNamePair._id){
+        console.log("vnjibvwi!!!");
+        toggleEdit(false);
     }
 
     let selectClass = "unselected-list-card";
@@ -75,6 +85,7 @@ function ListCard(props) {
                 type="button"
                 id={"delete-list-" + idNamePair._id}
                 className="list-card-button"
+                onClick = {handleDeleteList}
                 value={"\u2715"}
             />
             <input

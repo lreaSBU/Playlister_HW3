@@ -8,7 +8,7 @@ const Playlist = require('../models/playlist-model')
 */
 updatePlaylistById = (req, res) => {
     const body = req.body;
-    Playlist.updateOne({ _id: body._id }, { name: body.data.name }, function(err, res1) {
+    Playlist.updateOne({ _id: body._id }, { name: body.data.name, songs: body.data.songs }, function(err, res1) {
         return res.status(202).json({ success: true, message: 'Playlist Edited!' });
     }).catch(err => console.log(err));
     /*Playlist.findOne({ _id: body._id }, (err, list) => {
@@ -21,6 +21,19 @@ updatePlaylistById = (req, res) => {
         //list = body.pl; //set the playlist to the given param
         return res.status(202).json({ success: true, playlist: list, message: 'Playlist Edited!'})
     }).catch(err => console.log(err))*/
+}
+deletePlaylistById = async (req, res) => {
+    Playlist.findById({ _id: req.params.id }, (err, list) => {
+        if (err) {
+            return res.status(404).json({
+                err,
+                message: 'Playlist not found!',
+            })
+        }
+        Playlist.findOneAndDelete({ _id: req.params.id }, () => {
+            return res.status(200).json({ success: true, data: list })
+        }).catch(err => console.log(err))
+    })
 }
 createPlaylist = (req, res) => {
     const body = req.body;
@@ -108,5 +121,6 @@ module.exports = {
     getPlaylists,
     getPlaylistPairs,
     getPlaylistById,
-    updatePlaylistById
+    updatePlaylistById,
+    deletePlaylistById
 }

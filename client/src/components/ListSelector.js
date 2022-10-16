@@ -9,17 +9,20 @@ import { GlobalStoreContext } from '../store'
 */
 const ListSelector = () => {
     const { store } = useContext(GlobalStoreContext);
+    const refresh = {status: false};
     store.history = useHistory();
-
+    console.log("RENDERING PLAYLISTS");
+    console.log(store);
     useEffect(() => {
         store.loadIdNamePairs();
     }, []);
 
     function handleCreateNewList() {
-        var testName = "New List";
-        var ret = store.createNewList(testName);
-        console.log("RET::");
-        console.log(ret);
+        var testName = "Untitled";
+        store.createNewList(testName);
+        //store.setlistNameActive(store.currentList._id); //go into edit mode immediately
+        //refresh.status = !refresh.status;
+        //store.setlistNameActive(store.currentList.data.playlist._id); //go into edit mode
     }
     let listCard = "";
     if (store) {

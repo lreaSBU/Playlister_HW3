@@ -1,3 +1,4 @@
+import DeleteListModal from "./DeleteListModal";
 import EditToolbar from "./EditToolbar";
 /*
     Our Application's Banner, note we are using function-style
