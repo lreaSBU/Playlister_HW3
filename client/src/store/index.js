@@ -1,5 +1,7 @@
 import { createContext, useState } from 'react'
 import jsTPS from '../common/jsTPS'
+import AddSongTransaction from '../common/AddSongTransaction'
+import RemoveSongTransaction from '../common/RemoveSongTransaction'
 import api from '../api'
 export const GlobalStoreContext = createContext({});
 /*
@@ -19,7 +21,8 @@ export const GlobalStoreActionType = {
     SET_CURRENT_LIST: "SET_CURRENT_LIST",
     SET_LIST_NAME_EDIT_ACTIVE: "SET_LIST_NAME_EDIT_ACTIVE",
     MARK_LIST_FOR_DELETION: "MARK_LIST_FOR_DELETION",
-    UNMARK_LIST_FOR_DELETION: "UNMARK_LIST_FOR_DELETION"
+    UNMARK_LIST_FOR_DELETION: "UNMARK_LIST_FOR_DELETION",
+    CHANGE_SONGS: "CHANGE_SONGS"
 }
 
 // WE'LL NEED THIS TO PROCESS TRANSACTIONS
@@ -119,6 +122,15 @@ export const useGlobalStore = () => {
                     currentList: payload,
                     newListCounter: store.newListCounter,
                     listNameActive: true,
+                    listMarkedForDeletion: null
+                });
+            }
+            case GlobalStoreActionType.CHANGE_SONGS: {
+                return setStore({
+                    idNamePairs: store.idNamePairs,
+                    currentList: payload,
+                    newListCounter: store.newListCounter,
+                    listNameActive: false,
                     listMarkedForDeletion: null
                 });
             }
@@ -275,10 +287,10 @@ export const useGlobalStore = () => {
 
 
     store.addAddSongTransaction = function(song){
-        tps.addTransaction(new AddSongTransaction(song));
+        tps.addTransaction(new AddSongTransaction(store, song));
     }
     store.addRemoveSongTransaction = function(song){
-        tps.addTransaction(new RemoveSongTransaction(song));
+        tps.addTransaction(new RemoveSongTransaction(store, song));
     }
     store.removeSong = async function(song){
         var r = await api.removeSong(store.currentList._id, song);
@@ -295,8 +307,21 @@ export const useGlobalStore = () => {
         console.log(r);
         if(r.data.success){
             console.log("Succesfully added song!");
+            storeReducer({
+                type: GlobalStoreActionType.CHANGE_SONGS,
+                payload: r.data.playlist
+            });
+            console.log("NOW?");
+            console.log(store);
+            //store.currentList.songs = r.data.playlist.songs;
+            /*var up = await api.updatePlaylistById(store.currentList._id, r.data.playlist);
+            console.log(up);
+            if(up.status == 200){
+                console.log("succesfully actually updated the playlist with new song!");
+                store.loadIdNamePairs();
+                console.log(store);
+            }*/
         }
-        store.loadIdNamePairs();
     }
     // THIS FUNCTION ENABLES THE PROCESS OF EDITING A LIST NAME
     store.setlistNameActive = function (id) {

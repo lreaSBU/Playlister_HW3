@@ -1,6 +1,5 @@
 
 import jsTPS_Transaction from "../common/jsTPS.js"
-import { GlobalStoreContext } from '../store';
 /**
  * MoveSong_Transaction
  * 
@@ -11,16 +10,17 @@ import { GlobalStoreContext } from '../store';
  * @author ?
  */
 export default class AddSong_Transaction extends jsTPS_Transaction {
-    constructor(song) {
+    constructor(store, song) {
         super();
+        this.store = store;
         this.song = song;
     }
 
     doTransaction() {
-        store.removeSong(this.song);
+        this.store.removeSong(this.song);
     }
     
     undoTransaction() {
-        store.addSong(this.song);
+        this.store.addSong(this.song);
     }
 }

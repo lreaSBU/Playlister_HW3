@@ -6,10 +6,45 @@ const Playlist = require('../models/playlist-model')
     
     @author McKilla Gorilla
 */
+addSong = async (req, res) => { //pid, song
+    var body = req.body;
+    console.log(body);
+    var pid = body.list;
+    var song = body.song;
+    await Playlist.findOne({ _id: pid }, (err, list) => {
+        if (err) {
+            return res.status(400).json({ success: false, error: err })
+        }
+        var index = list.songs.length;
+        list.songs.push(song);
+        //list.songs.push((song, index));
+        Playlist.updateOne({ _id: pid }, { name: list.name, songs: list.songs }, function(err, res1) {
+            return res.status(200).json({ success: true, playlist: list, message: 'Song Added!' });
+        }).catch(err => console.log(err));
+        //return res.status(200).json({ success: true, playlist: list }) //song added!
+    }).catch(err => console.log(err))
+}
+removeSong = async (req, res) => {
+    var body = req.body;
+    var pid = body.list;
+    var song = body.song;
+    await Playlist.findOne({ _id: pid }, (err, list) => {
+        if (err) {
+            return res.status(400).json({ success: false, error: err })
+        }
+        for(var i = 0; i < list.songs.length; i++){
+            if(list.songs[i].name == song.name){
+                list.songs.splice(i, 1);
+                break;
+            }
+        }
+        return res.status(200).json({ success: true, playlist: list }) //song removed!
+    }).catch(err => console.log(err))
+}
 updatePlaylistById = (req, res) => {
     const body = req.body;
     Playlist.updateOne({ _id: body._id }, { name: body.data.name, songs: body.data.songs }, function(err, res1) {
-        return res.status(202).json({ success: true, message: 'Playlist Edited!' });
+        return res.status(200).json({ success: true, message: 'Playlist Edited!' });
     }).catch(err => console.log(err));
     /*Playlist.findOne({ _id: body._id }, (err, list) => {
         if (err) {
@@ -55,7 +90,7 @@ createPlaylist = (req, res) => {
     playlist
         .save()
         .then(() => {
-            return res.status(201).json({
+            return res.status(200).json({
                 success: true,
                 playlist: playlist,
                 message: 'Playlist Created!',
@@ -122,5 +157,7 @@ module.exports = {
     getPlaylistPairs,
     getPlaylistById,
     updatePlaylistById,
-    deletePlaylistById
+    deletePlaylistById,
+    addSong,
+    removeSong
 }
