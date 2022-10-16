@@ -15,7 +15,7 @@ const playlistSchema = new Schema(
             youTubeId: String
         }], required: true }
     },
-    { timestamps: true },
+    { timestamps: true, strict: false},
 )
 
 module.exports = mongoose.model('playlist', playlistSchema)

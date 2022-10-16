@@ -16,7 +16,10 @@ const ListSelector = () => {
     }, []);
 
     function handleCreateNewList() {
-        store.createNewList();
+        var testName = "New List";
+        var ret = store.createNewList(testName);
+        console.log("RET::");
+        console.log(ret);
     }
     let listCard = "";
     if (store) {
