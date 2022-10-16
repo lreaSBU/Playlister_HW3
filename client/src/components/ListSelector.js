@@ -26,11 +26,13 @@ const ListSelector = () => {
     }
     let listCard = "";
     if (store) {
+        console.log(store);
         listCard = store.idNamePairs.map((pair) => (
             <ListCard
                 key={pair._id}
                 idNamePair={pair}
                 selected={false}
+                editing={store.listNameActive && pair == store.idNamePairs[store.idNamePairs.length-1]}
             />
         ))
     }

@@ -24,7 +24,8 @@ export const GlobalStoreActionType = {
     SET_LIST_NAME_EDIT_ACTIVE: "SET_LIST_NAME_EDIT_ACTIVE",
     MARK_LIST_FOR_DELETION: "MARK_LIST_FOR_DELETION",
     UNMARK_LIST_FOR_DELETION: "UNMARK_LIST_FOR_DELETION",
-    CHANGE_SONGS: "CHANGE_SONGS"
+    CHANGE_SONGS: "CHANGE_SONGS",
+    LOAD_ID_AFTER_CREATE: "LOAD_ID_AFTER_CREATE"
 }
 
 // WE'LL NEED THIS TO PROCESS TRANSACTIONS
@@ -46,6 +47,7 @@ export const useGlobalStore = () => {
     // HANDLE EVERY TYPE OF STATE CHANGE
     const storeReducer = (action) => {
         const { type, payload } = action;
+        console.log("REDUCING " + type);
         switch (type) {
             // LIST UPDATE OF ITS NAME
             case GlobalStoreActionType.CHANGE_LIST_NAME: {
@@ -73,7 +75,7 @@ export const useGlobalStore = () => {
                     idNamePairs: store.idNamePairs,
                     currentList: payload,
                     newListCounter: store.newListCounter + 1,
-                    listNameActive: false,
+                    listNameActive: true,
                     listMarkedForDeletion: null
                 })
             }
@@ -84,6 +86,16 @@ export const useGlobalStore = () => {
                     currentList: null,
                     newListCounter: store.newListCounter,
                     listNameActive: false,
+                    listMarkedForDeletion: null
+                });
+            }
+            //refresh listings after creation (special case)
+            case GlobalStoreActionType.LOAD_ID_AFTER_CREATE: {
+                return setStore({
+                    idNamePairs: payload,
+                    currentList: null,
+                    newListCounter: store.newListCounter,
+                    listNameActive: true,
                     listMarkedForDeletion: null
                 });
             }
@@ -211,6 +223,22 @@ export const useGlobalStore = () => {
         }
         asyncLoadIdNamePairs();
     }
+    store.loadIdAfterCreate = function () { //does same exact thing as loadIdPairNames but keeps listNameActive true
+        async function asyncLoadIdNamePairs() {
+            const response = await api.getPlaylistPairs();
+            if (response.data.success) {
+                let pairsArray = response.data.idNamePairs;
+                storeReducer({
+                    type: GlobalStoreActionType.LOAD_ID_AFTER_CREATE,
+                    payload: pairsArray
+                });
+            }
+            else {
+                console.log("API FAILED TO GET THE LIST PAIRS");
+            }
+        }
+        asyncLoadIdNamePairs();
+    }
     store.deleteList = async function (lid) {
         console.log("LID: " + lid);
         let response = await api.deletePlaylistById(lid);
@@ -252,9 +280,14 @@ export const useGlobalStore = () => {
                     type: GlobalStoreActionType.CREATE_NEW_LIST,
                     payload: pl
                 });
+                store.loadIdAfterCreate(); //LOAD_ID_AFTER_CREATE
+                /*storeReducer({
+                    type: GlobalStoreActionType.SET_LIST_NAME_EDIT_ACTIVE,
+                    payload: pl
+                });*/
+                //store.loadIdNamePairs();
                 //store.history.push("/playlist/" + pl._id); //DONT DO THIS HERE
             }
-            store.loadIdNamePairs();
         }
         asynccreateNewList();
         //console.log("CURID: " + store.currentList._id);

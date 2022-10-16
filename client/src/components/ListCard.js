@@ -9,11 +9,11 @@ import { GlobalStoreContext } from '../store'
     @author McKilla Gorilla
 */
 function ListCard(props) {
+    const { idNamePair, selected, editing } = props;
     const { store } = useContext(GlobalStoreContext);
-    const [ editActive, setEditActive ] = useState(false);
+    const [ editActive, setEditActive ] = useState(editing);
     const [ text, setText ] = useState("");
     store.history = useHistory();
-    const { idNamePair, selected } = props;
     function handleLoadList(event) {
         if (!event.target.disabled) {
             let _id = event.target.id;
