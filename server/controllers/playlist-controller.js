@@ -24,6 +24,33 @@ addSong = async (req, res) => { //pid, song
         //return res.status(200).json({ success: true, playlist: list }) //song added!
     }).catch(err => console.log(err))
 }
+function array_move(arr, old_index, new_index) {
+    if (new_index >= arr.length) {
+        var k = new_index - arr.length + 1;
+        while (k--) {
+            arr.push(undefined);
+        }
+    }
+    arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
+    return arr; // for testing
+}
+moveSong = async (req, res) => {
+    var body = req.body;
+    var pid = body.list;
+    var o = body.orig;
+    var d = body.dest;
+    await Playlist.findOne({ _id: pid }, (err, list) => {
+        if (err) {
+            return res.status(400).json({ success: false, error: err })
+        }
+        array_move(list.songs, o, d);
+        //list.songs.push((song, index));
+        Playlist.updateOne({ _id: pid }, { name: list.name, songs: list.songs }, function(err, res1) {
+            return res.status(200).json({ success: true, playlist: list, message: 'Song Moved!' });
+        }).catch(err => console.log(err));
+        //return res.status(200).json({ success: true, playlist: list }) //song added!
+    }).catch(err => console.log(err))
+}
 editSong = async (req, res) => {
     var body = req.body;
     var pid = body.list;
@@ -188,5 +215,6 @@ module.exports = {
     deletePlaylistById,
     addSong,
     removeSong,
-    editSong
+    editSong,
+    moveSong
 }

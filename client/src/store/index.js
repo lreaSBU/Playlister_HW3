@@ -3,6 +3,7 @@ import jsTPS from '../common/jsTPS'
 import AddSongTransaction from '../common/AddSongTransaction'
 import RemoveSongTransaction from '../common/RemoveSongTransaction'
 import EditSongTransaction from '../common/EditSongTransaction'
+import MoveSongTransaction from '../common/MoveSongTransaction'
 import api from '../api'
 export const GlobalStoreContext = createContext({});
 /*
@@ -286,6 +287,9 @@ export const useGlobalStore = () => {
         tps.doTransaction();
     }
 
+    store.addMoveSongTransaction = function(orig, dest){
+        tps.addTransaction(new MoveSongTransaction(store, orig, dest));
+    }
     store.addEditSongTransaction = function(song, newTitle, newArtist, newLink){
         tps.addTransaction(new EditSongTransaction(store, song, newTitle, newArtist, newLink));
     }
@@ -294,6 +298,20 @@ export const useGlobalStore = () => {
     }
     store.addRemoveSongTransaction = function(song){
         tps.addTransaction(new RemoveSongTransaction(store, song));
+    }
+    store.moveSong = async function(o, d){
+        var r = await api.moveSong(store.currentList._id, o, d);
+        console.log("attempting song move: " + o + ", " + d);
+        console.log(r);
+        if(r.data.success){
+            console.log("Succesfully moved song!");
+            storeReducer({
+                type: GlobalStoreActionType.CHANGE_SONGS,
+                payload: r.data.playlist
+            });
+            console.log("MOVED NOW?");
+            console.log(store);
+        }
     }
     store.editSong = async function(song, t, a, l){
         var r = await api.editSong(store.currentList._id, song, t, a, l);

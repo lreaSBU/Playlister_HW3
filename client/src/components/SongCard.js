@@ -7,6 +7,7 @@ function SongCard(props) {
     const [ atext, setAtext ] = useState("");
     const [ ltext, setLtext ] = useState("");
     const [editMode, setEditMode] = useState(false);
+    const [drag, setDrag] = useState(false);
     const { song, index } = props;
     let cardClass = "list-card unselected-list-card";
 
@@ -21,15 +22,7 @@ function SongCard(props) {
         setEditMode(newMode);
     }
 
-    function handleKeyPress(event) {
-        /*if (event.code === "Enter") {
-            let id = event.target.id.substring("list-".length);
-            //console.log("chagning to: " + text + " with id: " + id);
-            //store.changeListName(id, text);
-            store.changeSong(song, ttext, atext, ltext);
-            handleEditToggle();
-        }*/
-    }
+    function handleKeyPress(event){}
     function handleUpdateTtext(event) {
         setTtext(event.target.value );
     }
@@ -45,6 +38,55 @@ function SongCard(props) {
     function editConfirm(event){
         store.addEditSongTransaction(song, ttext, atext, ltext);
         handleEditToggle();
+    }
+
+    function handleDragStart(event){
+        event.dataTransfer.setData("song", event.target.id);
+        //this.setState(prevState => ({
+        //    isDragging: true,
+        //    draggedTo: prevState.draggedTo
+        //}));
+        setDrag(true);
+    }
+    function handleDragOver(event) {
+        event.preventDefault();
+        /*this.setState(prevState => ({
+            isDragging: prevState.isDragging,
+            draggedTo: true
+        }));*/
+    }
+    function handleDragEnter(event) {
+        event.preventDefault();
+        /*this.setState(prevState => ({
+            isDragging: prevState.isDragging,
+            draggedTo: true
+        }));*/
+    }
+    function handleDragLeave(event) {
+        event.preventDefault();
+        /*this.setState(prevState => ({
+            isDragging: prevState.isDragging,
+            draggedTo: false
+        }));*/
+    }
+    function handleDrop(event){
+        event.preventDefault();
+        let target = event.target;
+        let targetId = target.id;
+        console.log("targetId: " + targetId);
+        targetId = targetId.substring(target.id.indexOf("-") + 1);
+        let sourceId = event.dataTransfer.getData("song");
+        sourceId = sourceId.substring(sourceId.indexOf("-") + 1);
+        console.log("targetId: " + targetId);
+        console.log("sourceId: " + sourceId);
+        /*this.setState(prevState => ({
+            isDragging: false,
+            draggedTo: false
+        }));*/
+        setDrag(false);
+
+        // ASK THE MODEL TO MOVE THE DATA
+        store.addMoveSongTransaction(sourceId, targetId);
     }
 
     if(editMode){
@@ -91,8 +133,14 @@ function SongCard(props) {
     }else return (
         <div
             key={index}
-            id={'song-' + index + '-card'}
+            id={'songcard-' + index}
             className={cardClass}
+            onDragStart={handleDragStart}
+            onDragOver={handleDragOver}
+            onDragEnter={handleDragEnter}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            draggable="true"
             onDoubleClick={handleEditToggle}
         >
             {index + 1}.

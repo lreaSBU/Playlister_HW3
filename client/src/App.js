@@ -14,9 +14,9 @@ const App = () => {
             <Switch>
                 <Route path="/" exact component={ListSelector} />
                 <Route path="/playlist/:id" exact component={PlaylistCards} />
+                <DeleteListModal />
             </Switch>
             <Statusbar />
-            <DeleteListModal />
         </Router>
     )
 }
