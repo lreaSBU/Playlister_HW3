@@ -211,8 +211,9 @@ export const useGlobalStore = () => {
         }
         asyncLoadIdNamePairs();
     }
-    store.deleteList = async function (list) {
-        let response = await api.deletePlaylistById(list._id);
+    store.deleteList = async function (lid) {
+        console.log("LID: " + lid);
+        let response = await api.deletePlaylistById(lid);
         if (response.data.success) {
             store.unmarkListForDeletion();
             store.loadIdNamePairs();
@@ -231,7 +232,7 @@ export const useGlobalStore = () => {
         }
     }
     store.deleteMarkedList = function () {
-        store.deleteList(store.listMarkedForDeletion);
+        store.deleteList(store.listMarkedForDeletion._id);
     }
 
     store.unmarkListForDeletion = function () {

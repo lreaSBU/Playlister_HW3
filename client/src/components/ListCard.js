@@ -27,7 +27,8 @@ function ListCard(props) {
 
     function handleDeleteList(event) {
         event.stopPropagation();
-        store.markListForDeletion(idNamePair._id);
+        store.deleteList(idNamePair._id);
+        //store.markListForDeletion(idNamePair._id); //CANT GET MODAL TO SHOW
     }
 
     function handleToggleEdit(event) {
