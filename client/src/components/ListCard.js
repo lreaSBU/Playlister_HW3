@@ -71,7 +71,7 @@ function ListCard(props) {
         toggleEdit(false);
     }
     let marked = ((store.listMarkedForDeletion && store.listMarkedForDeletion._id == idNamePair._id) ? true : false);
-    console.log("MARKED: " + marked);
+    //console.log("MARKED: " + marked);
     //setMark(store.listMarkedForDeletion && store.listMarkedForDeletion._id == idNamePair._id);
     /*let oldMarked = marked;
     marked = store.listMarkedForDeletion && store.listMarkedForDeletion._id == idNamePair._id;
@@ -139,7 +139,7 @@ function ListCard(props) {
                 id={"list-card-text-" + idNamePair._id}
                 key={"span-" + idNamePair._id}
                 className="list-card-text">
-                {("Are you sure you want to permenantly delete " + idNamePair.name + "?")}
+                Are you sure you want to permenantly delete {idNamePair.name} ?
             </span>
             <input
                 id={"confirm-" + idNamePair._id}
@@ -147,14 +147,14 @@ function ListCard(props) {
                 type='button'
                 onClick={handleRealDelete}
                 value={"Confirm"}
-            />;
+            />
             <input
                 id={"cancel-" + idNamePair._id}
                 className='list-card-button'
                 type='button'
                 onClick={handleUnmarkList}
                 value={"Cancel"}
-            />;
+            />
         </div>;
     }
     return (

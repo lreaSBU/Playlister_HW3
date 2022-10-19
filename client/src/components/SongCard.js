@@ -12,8 +12,11 @@ function SongCard(props) {
     let cardClass = "list-card unselected-list-card";
 
     function handleRemove(){
-        console.log("HANDLING REMOVAL");
-        store.addRemoveSongTransaction(song, index);
+        console.log("HANDLING MARKING FOR REMOVAL");
+        store.markSongForRemoval(song, index);
+
+        //console.log("HANDLING REMOVAL");
+        //store.addRemoveSongTransaction(song, index);
     }
 
     function handleEditToggle(){
@@ -88,8 +91,45 @@ function SongCard(props) {
         // ASK THE MODEL TO MOVE THE DATA
         store.addMoveSongTransaction(sourceId, targetId);
     }
-
-    if(editMode){
+    function handleRealRemove(e){
+        e.stopPropagation();
+        console.log("HANDLING REAL REMOVAL");
+        store.addRemoveSongTransaction(song, index);
+    }
+    function handleUnmark(e){
+        if(e != null) e.stopPropagation();
+        store.unMarkSongForRemoval();
+    }
+    //console.log(store.songMarkedForDeletion);
+    //if(store.songMarkedForDeletion != null) console.log(" ==> " + store.songMarkedForDeletion[0] + " , " + store.songMarkedForDeletion[1]);
+    let marked = (store.songMarkedForDeletion != null && store.songMarkedForDeletion[0]._id == song._id);
+    //console.log("IS_MARKED?: " + marked);
+    if(marked){
+        return(
+            <div
+            key={index}
+            id={'songcard-' + index}
+            className={cardClass}
+            draggable="false"
+        >
+            Are you sure you want to remove {song.name} by {song.artist} ?
+            <input
+                type="button"
+                id={"Confirm-remove-song-" + index}
+                className="list-card-button"
+                value={"Confirm"}
+                onClick={handleRealRemove}
+            />
+            <input
+                type="button"
+                id={"Cancel-remove-song-" + index}
+                className="list-card-button"
+                value={"Cancel"}
+                onClick={handleUnmark}
+            />
+        </div>
+        ) 
+    }else if(editMode){
         return <div>
             <input
                 id={"title-" + song._id}
