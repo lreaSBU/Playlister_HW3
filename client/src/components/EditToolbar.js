@@ -24,7 +24,8 @@ function EditToolbar() {
         store.closeCurrentList();
     }
     function handleAdd(){
-        store.addSong({title: "Untitled", artist: "Unknown", youTubeId: "dQw4w9WgXcQ"});
+        //store.addSong({title: "Untitled", artist: "Unknown", youTubeId: "dQw4w9WgXcQ"});
+        store.addAddSongTransaction({title: "Untitled", artist: "Unknown", youTubeId: "dQw4w9WgXcQ"}, -1);
     }
     let editStatus = false;
     if (store.isListNameEditActive) {

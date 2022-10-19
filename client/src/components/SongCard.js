@@ -13,7 +13,7 @@ function SongCard(props) {
 
     function handleRemove(){
         console.log("HANDLING REMOVAL");
-        store.addRemoveSongTransaction(song);
+        store.addRemoveSongTransaction(song, index);
     }
 
     function handleEditToggle(){

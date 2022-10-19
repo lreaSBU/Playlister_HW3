@@ -11,12 +11,14 @@ addSong = async (req, res) => { //pid, song
     console.log(body);
     var pid = body.list;
     var song = body.song;
+    var pos = body.pos;
     await Playlist.findOne({ _id: pid }, (err, list) => {
         if (err) {
             return res.status(400).json({ success: false, error: err })
         }
         var index = list.songs.length;
-        list.songs.push(song);
+        if(pos == -1) list.songs.push(song);
+        else list.songs.splice(pos, 0, song);
         //list.songs.push((song, index));
         Playlist.updateOne({ _id: pid }, { name: list.name, songs: list.songs }, function(err, res1) {
             return res.status(200).json({ success: true, playlist: list, message: 'Song Added!' });
@@ -80,16 +82,18 @@ removeSong = async (req, res) => {
     var body = req.body;
     var pid = body.list;
     var song = body.song;
+    var pos = body.pos;
     await Playlist.findOne({ _id: pid }, (err, list) => {
         if (err) {
             return res.status(400).json({ success: false, error: err })
         }
-        for(var i = 0; i < list.songs.length; i++){
+        /*for(var i = 0; i < list.songs.length; i++){
             if(list.songs[i]._id == song._id){
                 list.songs.splice(i, 1);
                 break;
             }
-        }
+        }*/
+        list.songs.splice(pos, 1);
         Playlist.updateOne({ _id: pid }, { name: list.name, songs: list.songs }, function(err, res1) {
             return res.status(200).json({ success: true, playlist: list, message: 'Song Removed!' });
         }).catch(err => console.log(err));

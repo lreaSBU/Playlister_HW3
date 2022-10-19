@@ -327,11 +327,11 @@ export const useGlobalStore = () => {
     store.addEditSongTransaction = function(song, newTitle, newArtist, newLink){
         tps.addTransaction(new EditSongTransaction(store, song, newTitle, newArtist, newLink));
     }
-    store.addAddSongTransaction = function(song){
-        tps.addTransaction(new AddSongTransaction(store, song));
+    store.addAddSongTransaction = function(song, pos){
+        tps.addTransaction(new AddSongTransaction(store, song, pos));
     }
-    store.addRemoveSongTransaction = function(song){
-        tps.addTransaction(new RemoveSongTransaction(store, song));
+    store.addRemoveSongTransaction = function(song, pos){
+        tps.addTransaction(new RemoveSongTransaction(store, song, pos));
     }
     store.moveSong = async function(o, d){
         var r = await api.moveSong(store.currentList._id, o, d);
@@ -361,8 +361,8 @@ export const useGlobalStore = () => {
             console.log(store);
         }
     }
-    store.removeSong = async function(song){
-        var r = await api.removeSong(store.currentList._id, song);
+    store.removeSong = async function(song, pos){
+        var r = await api.removeSong(store.currentList._id, song, pos);
         console.log("attempting song removal");
         console.log(r);
         if(r.data.success){
@@ -375,8 +375,8 @@ export const useGlobalStore = () => {
             console.log(store);
         }
     }
-    store.addSong = async function(song){
-        var r = await api.addSong(store.currentList._id, song);
+    store.addSong = async function(song, pos){
+        var r = await api.addSong(store.currentList._id, song, pos);
         console.log("attempting song addition");
         console.log(r);
         if(r.data.success){
