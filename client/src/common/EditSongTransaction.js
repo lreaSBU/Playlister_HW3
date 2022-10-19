@@ -10,11 +10,12 @@ import jsTPS_Transaction from "../common/jsTPS.js"
  * @author ?
  */
 export default class EditSong_Transaction extends jsTPS_Transaction {
-    constructor(store, song, nt, na, nl) {
+    constructor(store, song, pos, nt, na, nl) {
         super();
         this.store = store;
         this.song = song;
-        
+        this.pos = pos;
+
         this.nt = nt;
         this.na = na;
         this.nl = nl;
@@ -25,10 +26,10 @@ export default class EditSong_Transaction extends jsTPS_Transaction {
     }
 
     doTransaction() {
-        this.store.editSong(this.song, this.nt, this.na, this.nl);
+        this.store.editSong(this.song, this.pos, this.nt, this.na, this.nl);
     }
     
     undoTransaction() {
-        this.store.editSong(this.song, this.ot, this.oa, this.ol);
+        this.store.editSong(this.song, this.pos, this.ot, this.oa, this.ol);
     }
 }

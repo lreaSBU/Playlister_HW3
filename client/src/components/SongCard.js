@@ -12,6 +12,7 @@ function SongCard(props) {
     let cardClass = "list-card unselected-list-card";
 
     function handleRemove(){
+        if(store.songMarkedForEditing != null) return; //dont start removing if already editing
         console.log("HANDLING MARKING FOR REMOVAL");
         store.markSongForRemoval(song, index);
 
@@ -20,6 +21,8 @@ function SongCard(props) {
     }
 
     function handleEditToggle(){
+        store.toggleSongForEditing();
+        if(store.songMarkedForDeletion != null) return; //dont try editing if already deleting
         console.log("Entering edit mode");
         var newMode = !editMode;
         setEditMode(newMode);
@@ -39,7 +42,7 @@ function SongCard(props) {
         handleEditToggle();
     }
     function editConfirm(event){
-        store.addEditSongTransaction(song, ttext, atext, ltext);
+        store.addEditSongTransaction(song, index, ttext, atext, ltext);
         handleEditToggle();
     }
 
