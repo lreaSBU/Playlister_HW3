@@ -257,6 +257,7 @@ export const useGlobalStore = () => {
                 type: GlobalStoreActionType.MARK_LIST_FOR_DELETION,
                 payload: pl
             });
+            //store.loadIdNamePairs();
         }
     }
     store.deleteMarkedList = function () {
@@ -268,6 +269,7 @@ export const useGlobalStore = () => {
             type: GlobalStoreActionType.UNMARK_LIST_FOR_DELETION,
             payload: null
         });
+        //store.loadIdNamePairs();
     }
     store.createNewList = function(name){
         async function asynccreateNewList(){

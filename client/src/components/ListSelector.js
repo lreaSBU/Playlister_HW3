@@ -32,7 +32,8 @@ const ListSelector = () => {
                 key={pair._id}
                 idNamePair={pair}
                 selected={false}
-                editing={store.listNameActive && pair == store.idNamePairs[store.idNamePairs.length-1]}
+                editing={store.listNameActive && pair == store.idNamePairs[store.idNamePairs.length-1]} //NVM, IDK HOW THIS FUCKING WORKS
+                marking={((store.listMarkedForDeletion && store.listMarkedForDeletion._id == pair._id) ? true : false)}
             />
         ))
     }

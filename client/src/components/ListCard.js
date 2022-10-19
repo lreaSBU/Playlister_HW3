@@ -9,9 +9,10 @@ import { GlobalStoreContext } from '../store'
     @author McKilla Gorilla
 */
 function ListCard(props) {
-    const { idNamePair, selected, editing } = props;
+    const { idNamePair, selected, editing} = props;
     const { store } = useContext(GlobalStoreContext);
     const [ editActive, setEditActive ] = useState(editing);
+    //const [ marked, setMark ] = useState(marking);
     const [ text, setText ] = useState("");
     store.history = useHistory();
     function handleLoadList(event) {
@@ -27,8 +28,8 @@ function ListCard(props) {
 
     function handleDeleteList(event) {
         event.stopPropagation();
-        store.deleteList(idNamePair._id);
-        //store.markListForDeletion(idNamePair._id); //CANT GET MODAL TO SHOW
+        //store.deleteList(idNamePair._id);
+        store.markListForDeletion(idNamePair._id); //CANT GET MODAL TO SHOW, JUST GONNA ASK FOR CONFIRM IN BOX
     }
 
     function handleToggleEdit(event) {
@@ -55,11 +56,29 @@ function ListCard(props) {
     function handleUpdateText(event) {
         setText(event.target.value );
     }
+    function handleRealDelete(e){
+        e.stopPropagation();
+        store.deleteList(idNamePair._id);
+        handleUnmarkList(null);
+    }
+    function handleUnmarkList(e){
+        if(e != null) e.stopPropagation();
+        console.log("ASKING FOR UNMARK!!!");
+        store.unmarkListForDeletion();
+    }
 
     if(!editActive && store.listNameActive && store.currentList && store.currentList._id == idNamePair._id){
-        console.log("vnjibvwi!!!");
         toggleEdit(false);
     }
+    let marked = ((store.listMarkedForDeletion && store.listMarkedForDeletion._id == idNamePair._id) ? true : false);
+    console.log("MARKED: " + marked);
+    //setMark(store.listMarkedForDeletion && store.listMarkedForDeletion._id == idNamePair._id);
+    /*let oldMarked = marked;
+    marked = store.listMarkedForDeletion && store.listMarkedForDeletion._id == idNamePair._id;
+    if(!oldMarked && marked){ //brand new mark
+        console.log("SETTING MARK TO TRUE <~~~");
+        setMark(true);
+    }*/
 
     let selectClass = "unselected-list-card";
     if (selected) {
@@ -109,6 +128,34 @@ function ListCard(props) {
                 onChange={handleUpdateText}
                 defaultValue={idNamePair.name}
             />;
+    }else if(marked){
+        console.log("CHANGING ELEMS BC MARKED");
+        cardElement =
+        <div
+            id={idNamePair._id}
+            key={idNamePair._id}
+            className={'list-card ' + "unselected-list-card"}>
+            <span
+                id={"list-card-text-" + idNamePair._id}
+                key={"span-" + idNamePair._id}
+                className="list-card-text">
+                {("Are you sure you want to permenantly delete " + idNamePair.name + "?")}
+            </span>
+            <input
+                id={"confirm-" + idNamePair._id}
+                className='list-card-button'
+                type='button'
+                onClick={handleRealDelete}
+                value={"Confirm"}
+            />;
+            <input
+                id={"cancel-" + idNamePair._id}
+                className='list-card-button'
+                type='button'
+                onClick={handleUnmarkList}
+                value={"Cancel"}
+            />;
+        </div>;
     }
     return (
         cardElement
